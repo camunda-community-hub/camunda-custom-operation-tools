@@ -55,10 +55,10 @@ This application relies on 2 kind of users :
 ## Build and run the image
 
 ```
-docker build -t camunda-community/friendly-connector-runtime .
+docker build -t camunda-community/custom-operate .
 ```
 ```
-docker run -p 8888:8080 camunda-community/friendly-connector-runtime
+docker run -p 8888:8080 camunda-community/custom-operate
 ```
 
 ## Time consumption
