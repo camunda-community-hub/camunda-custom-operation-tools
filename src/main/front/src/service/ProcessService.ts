@@ -26,6 +26,10 @@ export class ProcessService {
     const { data } = await api.get<any[]>('/process/' + key + '/flownodes');
     return data;
   }
+  getVariables = async (key: number): Promise<any[]> => {
+    const { data } = await api.get<any[]>('/process/' + key + '/variables');
+    return data;
+  }
 }
 
 const processService = new ProcessService();
