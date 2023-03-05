@@ -3,6 +3,7 @@ package org.camunda.custom.operate.facade;
 import io.camunda.operate.dto.FlownodeInstance;
 import io.camunda.operate.dto.ProcessDefinition;
 import io.camunda.operate.dto.ProcessInstance;
+import io.camunda.operate.dto.Variable;
 import io.camunda.operate.exception.OperateException;
 import io.camunda.zeebe.client.ZeebeClient;
 import java.util.ArrayList;
@@ -128,5 +129,12 @@ public class ProcessController {
   public List<FlownodeInstance> getProcessInstanceHistory(@PathVariable Long processInstanceKey)
       throws OperateException {
     return operateService.getProcessInstanceHistory(processInstanceKey);
+  }
+
+  @IsAuthenticated
+  @GetMapping("/{processInstanceKey}/variables")
+  public List<Variable> getProcessInstanceVariables(@PathVariable Long processInstanceKey)
+      throws OperateException {
+    return operateService.getProcessInstanceVariables(processInstanceKey);
   }
 }

@@ -6,6 +6,7 @@ import io.camunda.operate.auth.SelfManagedAuthentication;
 import io.camunda.operate.dto.FlownodeInstance;
 import io.camunda.operate.dto.ProcessDefinition;
 import io.camunda.operate.dto.ProcessInstance;
+import io.camunda.operate.dto.Variable;
 import io.camunda.operate.exception.OperateException;
 import io.camunda.operate.search.FlownodeInstanceFilter;
 import io.camunda.operate.search.ProcessDefinitionFilter;
@@ -13,6 +14,7 @@ import io.camunda.operate.search.ProcessInstanceFilter;
 import io.camunda.operate.search.SearchQuery;
 import io.camunda.operate.search.Sort;
 import io.camunda.operate.search.SortOrder;
+import io.camunda.operate.search.VariableFilter;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -154,5 +156,18 @@ public class OperateService {
 
   public ProcessInstance getProcessInstance(Long processInstanceKey) throws OperateException {
     return getCamundaOperateClient().getProcessInstance(processInstanceKey);
+  }
+
+  public List<Variable> getProcessInstanceVariables(Long processInstanceKey)
+      throws OperateException {
+    VariableFilter variableFilter =
+        new VariableFilter.Builder().processInstanceKey(processInstanceKey).build();
+    SearchQuery varQuery =
+        new SearchQuery.Builder()
+            .filter(variableFilter)
+            .size(1000)
+            .sort(new Sort("name", SortOrder.ASC))
+            .build();
+    return getCamundaOperateClient().searchVariables(varQuery);
   }
 }

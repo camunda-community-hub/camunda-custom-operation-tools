@@ -62,4 +62,4 @@ docker run -p 8888:8080 camunda-community/custom-operate
 ```
 
 ## Time consumption
-The current result was developped in 6 hours.
+The current result was developped in 7 hours.
