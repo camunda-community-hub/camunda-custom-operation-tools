@@ -75,8 +75,16 @@ function Instance() {
   }
   useEffect(() => {
     if (history && navigatedViewer) {
-      for (let i = 0; i < history.length; i++) {
-      colorSequenceFlow(history[i].flowNodeId, "#6699CC");
+      for (let i = history.length-1; i >= 0; i--) {
+        if (history[i].state != "TERMINATED") {
+          if (history[i].incident === true) {
+            colorSequenceFlow(history[i].flowNodeId, "#CC0000");
+          } else if (history[i].state === "ACTIVE") {
+            colorSequenceFlow(history[i].flowNodeId, "#00CC00");
+          } else {
+            colorSequenceFlow(history[i].flowNodeId, "#6699CC");
+          }
+        }
     }
     }
   }, [history, navigatedViewer]);
@@ -128,7 +136,7 @@ function Instance() {
       clone.businessObject = flowNode.businessObject;
       clone.x = event.originalEvent.x;
       clone.y = event.originalEvent.y;
-      for (let i = 0; i < globalHisto!.length; i++) {
+      for (let i = globalHisto!.length - 1; i >= 0 ; i--) {
         if (globalHisto![i].flowNodeId == flowNode.id) {
           clone.instance = globalHisto![i];
         }
