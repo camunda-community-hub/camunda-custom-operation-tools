@@ -128,6 +128,7 @@ declare module 'bpmn-js/lib/NavigatedViewer' {
     destroy: () => void;
     get(module: 'elementRegistry'): {
       get(elementId: BpmnElement['id']): BpmnElement;
+      getAll(): BpmnElement[];
       filter(callback: (element: BpmnElement) => boolean): BpmnElement[];
       getGraphics(element: BpmnElement): SVGGraphicsBpmnElement;
       getGraphics(elementId: BpmnElement['id']): SVGGraphicsElement;
