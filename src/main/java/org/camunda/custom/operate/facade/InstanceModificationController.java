@@ -34,12 +34,14 @@ public class InstanceModificationController extends AbstractController {
 
   @IsAuthenticated
   @PostMapping
-  public void requestModification(@RequestBody ProcInstanceModificationRequest request) {
+  public ProcInstanceModificationRequest requestModification(
+      @RequestBody ProcInstanceModificationRequest request) {
     request.setId(Long.valueOf(modificationRequests.size()));
     request.setOpened(new Date());
     request.setRequester(getAuthenticatedUsername());
     request.setStatus("Open");
     modificationRequests.add(request);
+    return request;
   }
 
   @IsAuthenticated
@@ -67,44 +69,44 @@ public class InstanceModificationController extends AbstractController {
   public void validateRequestModification(@PathVariable Long id, @PathVariable String state) {
     ProcInstanceModificationRequest request =
         modificationRequests.get(Integer.valueOf(id.toString()));
-    // if (!request.getRequester().equals(getAuthenticatedUsername())) {
-    request.setStatus(state);
-    request.setClosed(new Date());
-    request.setValidator(getAuthenticatedUsername());
-    if (state.equals("approved")) {
-      if (request.getVariables() != null && !request.getVariables().isEmpty()) {
-        zeebe
-            .newSetVariablesCommand(request.getInstanceKey())
-            .variables(request.getVariables())
-            .send();
-      }
-      if (request.getTerminateNodes() != null || request.getActivateNodes() != null) {
-        ModifyProcessInstanceCommandStep1 modifyCmd =
-            zeebe.newModifyProcessInstanceCommand(request.getInstanceKey());
-        int steps = request.getTerminateNodes() != null ? request.getTerminateNodes().size() : 0;
-        steps += request.getActivateNodes() != null ? request.getActivateNodes().size() : 0;
-        int step = 1;
-        for (String activating : request.getActivateNodes()) {
-          if (step < steps) {
-            modifyCmd = modifyCmd.activateElement(activating).and();
-          } else {
-            modifyCmd.activateElement(activating).send();
-          }
-          step++;
+    if (!request.getRequester().equals(getAuthenticatedUsername())) {
+      request.setStatus(state);
+      request.setClosed(new Date());
+      request.setValidator(getAuthenticatedUsername());
+      if (state.equals("approved")) {
+        if (request.getVariables() != null && !request.getVariables().isEmpty()) {
+          zeebe
+              .newSetVariablesCommand(request.getInstanceKey())
+              .variables(request.getVariables())
+              .send();
         }
-        for (Long terminating : request.getTerminateNodes()) {
-          if (step < steps) {
-            modifyCmd = modifyCmd.terminateElement(terminating).and();
-          } else {
-            modifyCmd.terminateElement(terminating).send();
+        if (request.getTerminateNodes() != null || request.getActivateNodes() != null) {
+          ModifyProcessInstanceCommandStep1 modifyCmd =
+              zeebe.newModifyProcessInstanceCommand(request.getInstanceKey());
+          int steps = request.getTerminateNodes() != null ? request.getTerminateNodes().size() : 0;
+          steps += request.getActivateNodes() != null ? request.getActivateNodes().size() : 0;
+          int step = 1;
+          for (String activating : request.getActivateNodes()) {
+            if (step < steps) {
+              modifyCmd = modifyCmd.activateElement(activating).and();
+            } else {
+              modifyCmd.activateElement(activating).send();
+            }
+            step++;
           }
-          step++;
+          for (Long terminating : request.getTerminateNodes()) {
+            if (step < steps) {
+              modifyCmd = modifyCmd.terminateElement(terminating).and();
+            } else {
+              modifyCmd.terminateElement(terminating).send();
+            }
+            step++;
+          }
         }
       }
+    } else {
+      throw new UnauthorizedException("The requester can't validate his own request");
     }
-    // } else {
-    //  throw new UnauthorizedException("The requester can't validate his own request");
-    // }
   }
 
   @Override

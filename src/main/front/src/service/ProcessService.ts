@@ -30,6 +30,10 @@ export class ProcessService {
     const { data } = await api.get<any[]>('/process/' + key + '/variables');
     return data;
   }
+  submitChangeRequest = async (request: any): Promise<any> => {
+    const { data } = await api.post<any>('/instance/modif', request);
+    return data;
+  }
 }
 
 const processService = new ProcessService();
