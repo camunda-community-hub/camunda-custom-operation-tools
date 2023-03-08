@@ -1,10 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import processService from '../service/ProcessService';
-import NavigatedViewer, {
-  Event,
-} from 'bpmn-js/lib/NavigatedViewer';
+import NavigatedViewer from 'bpmn-js/lib/NavigatedViewer';
 import ElementTemplatesIconsRenderer from '@bpmn-io/element-template-icon-renderer';
-import { BusinessObject } from 'bpmn-js/lib/NavigatedViewer';
 import { Link } from "react-router-dom";
 import { Row, Col, Form, InputGroup, Table } from 'react-bootstrap';
 

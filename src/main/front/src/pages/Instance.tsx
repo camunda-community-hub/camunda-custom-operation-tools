@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import processService from '../service/ProcessService';
 import NavigatedViewer, {
     BpmnElement,
@@ -8,6 +7,7 @@ import NavigatedViewer, {
 import ElementTemplatesIconsRenderer from '@bpmn-io/element-template-icon-renderer';
 import { BusinessObject } from 'bpmn-js/lib/NavigatedViewer';
 import { Button, Modal, Table, InputGroup, DropdownButton, Dropdown, Badge, Form } from 'react-bootstrap';
+import InstanceVariables from '../components/InstanceVariables';
 
 let clickables: any[] = [];
 let globalHisto: any[] = [];
@@ -21,7 +21,6 @@ const updateInstance: { instanceKey: number; terminateNodes: number[]; activateN
 
 function Instance() {
 
-  const dispatch = useDispatch();
   const [instance, setInstance] = useState<any | null>(null);
   const [history, setHistory] = useState<any[] | null>(null);
   const [variables, setVariables] = useState<any[] | null>(null);
@@ -45,9 +44,7 @@ function Instance() {
   const loadProcessInstance = async () => {
     let url = window.location.href;
     let lastElt = url.substring(url.lastIndexOf("/") + 1, url.length);
-    if (lastElt != '' && lastElt != 'elementTemplate') {
-      setInstance(await processService.loadInstance(lastElt as unknown as number));
-    }
+    setInstance(await processService.loadInstance(lastElt as unknown as number));
   }
   useEffect(() => {
     loadXmlDefinition();
@@ -94,11 +91,11 @@ function Instance() {
       for (let i = history.length - 1; i >= 0; i--) {
         if (history[i].state != "TERMINATED") {
           if (history[i].incident === true) {
-            colorSequenceFlow(history[i].flowNodeId, "#CC0000");
+            colorActivity(history[i].flowNodeId, "#CC0000");
           } else if (history[i].state === "ACTIVE") {
-            colorSequenceFlow(history[i].flowNodeId, "#00CC00");
+            colorActivity(history[i].flowNodeId, "#00CC00");
           } else {
-            colorSequenceFlow(history[i].flowNodeId, "#6699CC");
+            colorActivity(history[i].flowNodeId, "#6699CC");
           }
         }
       }
@@ -155,7 +152,7 @@ function Instance() {
     }
   };
 
-  const colorSequenceFlow = (id: string, color: string) => {
+  const colorActivity = (id: string, color: string) => {
     const elementRegistry = navigatedViewer?.get('elementRegistry');
     const graphicsFactory = navigatedViewer?.get('graphicsFactory');
     const element = elementRegistry?.get(id);
@@ -302,25 +299,9 @@ function Instance() {
         </div>
         : <></>}
       <Button variant="primary" onClick={openStateModifModal}>Change state</Button>
-      <Table striped bordered hover>
-        <thead>
-          <tr>
-            <th scope="col">Process Variable</th>
-            <th scope="col">Value</th>
-          </tr>
-        </thead>
-        <tbody>
-          {processVariables ? processVariables.map((variable: any, index: number) =>
-            <tr key={index}>
-              <td>{variable.name}</td>
-              <td>{variable.value}</td>
-            </tr>
-          )
-            :
-            <></>
-          }
-        </tbody>
-      </Table>
+      {processVariables ?
+        <InstanceVariables variables={processVariables} />
+        : <></>}
 
       <Modal show={modifModal} animation={false} size="lg" onHide={() => setModifModal(false)}>
         <Modal.Header closeButton>

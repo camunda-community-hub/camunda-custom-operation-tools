@@ -38,6 +38,10 @@ export class ProcessService {
     const { data } = await api.get<any[]>('/instance/modif');
     return data;
   }
+  loadChangeRequest = async (id:number): Promise<any> => {
+    const { data } = await api.get<any>('/instance/modif/'+id);
+    return data;
+  }
 }
 
 const processService = new ProcessService();

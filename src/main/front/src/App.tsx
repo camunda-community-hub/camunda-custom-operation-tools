@@ -10,6 +10,7 @@ import Undefined from "./pages/Undefined";
 import AdminUsers from "./pages/AdminUsers";
 import InstancesList from "./pages/InstancesList";
 import InstanceModifList from "./pages/InstanceModifList";
+import InstanceModifRequest from "./pages/InstanceModifRequest";
 import Instance from "./pages/Instance";
 import './assets/css/bootstrap.min.css';
 import './assets/css/bootstrap-icons-1.7.2.css';
@@ -40,6 +41,7 @@ function App() {
             <Route index element={<InstancesList />} />
             <Route path="users" element={<AdminUsers />} />
             <Route path="modifRequests" element={<InstanceModifList />} />
+            <Route path="modifrequest/*" element={<InstanceModifRequest />} />
             <Route path="instances" element={<InstancesList />} />
             <Route path="instance/*" element={<Instance />} />
             <Route path="*" element={<Undefined />} />
