@@ -260,7 +260,7 @@ function Instance() {
       updateInstance.variables[modifVariables[i].key] = modifVariables[i].value;
     }
     let result = await processService.submitChangeRequest(updateInstance);
-    if (result.id) {
+    if (result.id !== undefined) {
       setModifModal(false);
       updateInstance.terminateNodes = [];
       updateInstance.activateNodes = [];
