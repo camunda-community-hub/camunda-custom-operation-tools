@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import processService from '../service/ProcessService';
 import Table from 'react-bootstrap/Table';
+import { Link } from "react-router-dom";
 
 function InstanceModifList() {
   const [requests, setRequests] = useState<any[] | null>(null);
@@ -33,7 +34,7 @@ function InstanceModifList() {
         <tbody>
           {requests ? requests.map((request: any, index: number) =>
             <tr key={index}>
-              <td>{request.id}</td>
+              <td><Link to={"/admin/modifrequest/" + request.id} >{request.id}</Link></td>
               <td>{request.instanceKey}</td>
               <td>{request.requester}</td>
               <td>{request.validator}</td>

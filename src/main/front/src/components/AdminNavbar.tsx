@@ -23,6 +23,9 @@ function AdminNavbar() {
         <div className="container-fluid">
           <Link to="/home"><img width="120" src={logo} className="custom-logo" alt="Camunda" /></Link>
 
+          <div>
+            <a className="btn btn-outline-secondary" onClick={logout}>{authService.getUser()!.username} <i className="bi bi-box-arrow-left"></i></a>
+          </div>
         </div>
 
           <div className="bg-primary menu">
