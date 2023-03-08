@@ -9,8 +9,8 @@ import Login from "./pages/Login";
 import Undefined from "./pages/Undefined";
 import AdminUsers from "./pages/AdminUsers";
 import InstancesList from "./pages/InstancesList";
+import InstanceModifList from "./pages/InstanceModifList";
 import Instance from "./pages/Instance";
-import AdminTranslations from "./pages/AdminTranslations";
 import './assets/css/bootstrap.min.css';
 import './assets/css/bootstrap-icons-1.7.2.css';
 import './assets/css/custom.css';
@@ -39,7 +39,7 @@ function App() {
           <Route path="admin" element={<AdminLayout />}>
             <Route index element={<InstancesList />} />
             <Route path="users" element={<AdminUsers />} />
-            <Route path="translations" element={<AdminTranslations />} />
+            <Route path="modifRequests" element={<InstanceModifList />} />
             <Route path="instances" element={<InstancesList />} />
             <Route path="instance/*" element={<Instance />} />
             <Route path="*" element={<Undefined />} />

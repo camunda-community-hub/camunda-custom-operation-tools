@@ -59,6 +59,12 @@ public class InstanceModificationController extends AbstractController {
   }
 
   @IsAuthenticated
+  @GetMapping
+  public List<ProcInstanceModificationRequest> getRequestModifications() {
+    return modificationRequests;
+  }
+
+  @IsAuthenticated
   @GetMapping("/{id}")
   public ProcInstanceModificationRequest getRequestModification(@PathVariable Long id) {
     return modificationRequests.get(Integer.valueOf(id.toString()));
