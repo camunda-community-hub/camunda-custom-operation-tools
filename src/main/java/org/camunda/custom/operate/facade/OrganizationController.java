@@ -5,7 +5,7 @@ import java.util.Collection;
 import java.util.Map;
 import org.camunda.custom.operate.exception.TechnicalException;
 import org.camunda.custom.operate.jsonmodel.Organization;
-import org.camunda.custom.operate.security.annotation.IsAdmin;
+import org.camunda.custom.operate.security.annotation.CanSeeVariables;
 import org.camunda.custom.operate.service.OrganizationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,13 +31,13 @@ public class OrganizationController extends AbstractController {
     this.organizationService = organizationService;
   }
 
-  @IsAdmin
+  @CanSeeVariables
   @GetMapping
   public Collection<Organization> listOrganizations() {
     return organizationService.all();
   }
 
-  @IsAdmin
+  @CanSeeVariables
   @PostMapping
   public Organization createOrganization() throws IOException {
     String name = "ACME";
@@ -48,13 +48,13 @@ public class OrganizationController extends AbstractController {
     return organizationService.createOrganization(name, false);
   }
 
-  @IsAdmin
+  @CanSeeVariables
   @PostMapping("/active/{orgName}")
   public Organization setActive(@PathVariable String orgName) throws IOException {
     return organizationService.activate(orgName, true);
   }
 
-  @IsAdmin
+  @CanSeeVariables
   @PutMapping("/{orgName}")
   public Organization updateOrganization(
       @PathVariable String orgName, @RequestBody Organization org) throws IOException {
@@ -67,7 +67,7 @@ public class OrganizationController extends AbstractController {
     return organizationService.saveOrganization(org);
   }
 
-  @IsAdmin
+  @CanSeeVariables
   @GetMapping("enabled")
   public Map<String, Object> enabled() {
     if (isKeycloakAuth()) {

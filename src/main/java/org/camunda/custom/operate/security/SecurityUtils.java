@@ -5,9 +5,9 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Set;
 import org.camunda.custom.operate.exception.TechnicalException;
 import org.camunda.custom.operate.jsonmodel.User;
 import org.springframework.security.core.Authentication;
@@ -32,12 +32,14 @@ public final class SecurityUtils {
   }
 
   public static String getJWTToken(User user) {
-    return getJWTToken(user.getUsername(), user.getEmail(), user.getProfile());
+    return getJWTToken(user.getUsername(), user.getEmail(), user.getRoles());
   }
 
-  public static String getJWTToken(String username, String email, String profile) {
+  public static String getJWTToken(String username, String email, Set<String> roles) {
     List<String> grantedAuthorities = new ArrayList<String>();
-    grantedAuthorities.add("ROLE_" + profile);
+    for (String role : roles) {
+      grantedAuthorities.add("ROLE_" + role);
+    }
 
     UserPrincipal principal = new UserPrincipal();
     principal.setUsername(username);
@@ -66,19 +68,14 @@ public final class SecurityUtils {
     return new UserPrincipal(username, email);
   }
 
-  public static String getProfile() {
+  public static boolean hasRole(String role) {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-    Iterator<? extends GrantedAuthority> it = authorities.iterator();
-    String profile = "user";
-    while (it.hasNext()) {
-      if (it.next().getAuthority().toLowerCase().equals("role_admin")) {
-        return "Admin";
-      }
-      if (it.next().getAuthority().toLowerCase().equals("role_editor")) {
-        profile = "Editor";
+    for (GrantedAuthority authority : authorities) {
+      if (authority.getAuthority().toLowerCase().equals("role_" + role.toLowerCase())) {
+        return true;
       }
     }
-    return profile;
+    return false;
   }
 }

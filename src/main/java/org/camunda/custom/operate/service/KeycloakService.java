@@ -38,12 +38,7 @@ public class KeycloakService {
     Set<String> roles = context.getToken().getRealmAccess().getRoles();
     user.setUsername(context.getIdToken().getGivenName());
     user.setEmail(context.getIdToken().getEmail());
-    user.setProfile("User");
-    if (roles.contains("Admin")) {
-      user.setProfile("Admin");
-    } else if (roles.contains("Editor")) {
-      user.setProfile("Editor");
-    }
+    user.setRoles(roles);
     return user;
   }
 }

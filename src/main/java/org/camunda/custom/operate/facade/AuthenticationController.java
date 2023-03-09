@@ -6,7 +6,6 @@ import org.camunda.custom.operate.facade.dto.AuthUser;
 import org.camunda.custom.operate.facade.dto.Authentication;
 import org.camunda.custom.operate.jsonmodel.User;
 import org.camunda.custom.operate.security.SecurityUtils;
-import org.camunda.custom.operate.security.annotation.IsAuthenticated;
 import org.camunda.custom.operate.service.KeycloakService;
 import org.camunda.custom.operate.service.OrganizationService;
 import org.slf4j.Logger;
@@ -48,7 +47,6 @@ public class AuthenticationController extends AbstractController {
     return getAuthUser(user);
   }
 
-  @IsAuthenticated
   @GetMapping("/user")
   public AuthUser getUser() {
     if (isKeycloakAuth()) {

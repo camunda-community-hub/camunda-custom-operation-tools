@@ -1,10 +1,12 @@
 package org.camunda.custom.operate.facade.dto;
 
+import java.util.Set;
+
 public class AuthUser {
   private String username;
   private String email;
   private String token;
-  private String profile;
+  private Set<String> roles;
 
   public String getUsername() {
     return username;
@@ -30,11 +32,11 @@ public class AuthUser {
     this.token = token;
   }
 
-  public String getProfile() {
-    return profile;
+  public Set<String> getRoles() {
+    return roles;
   }
 
-  public void setProfile(String profile) {
-    this.profile = profile;
+  public void setRoles(Set<String> roles) {
+    this.roles = roles;
   }
 }

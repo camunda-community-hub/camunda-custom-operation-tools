@@ -11,5 +11,5 @@ import org.springframework.security.access.prepost.PreAuthorize;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 @Operation(security = {@SecurityRequirement(name = "authorization")})
-@PreAuthorize("hasRole('Admin')")
-public @interface IsAdmin {}
+@PreAuthorize("hasRole('viewVariables')")
+public @interface CanSeeVariables {}

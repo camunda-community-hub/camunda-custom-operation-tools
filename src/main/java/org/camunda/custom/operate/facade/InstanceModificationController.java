@@ -7,6 +7,9 @@ import java.util.Date;
 import java.util.List;
 import org.camunda.custom.operate.exception.UnauthorizedException;
 import org.camunda.custom.operate.facade.dto.ProcInstanceModificationRequest;
+import org.camunda.custom.operate.security.SecurityUtils;
+import org.camunda.custom.operate.security.annotation.CanApproveModification;
+import org.camunda.custom.operate.security.annotation.CanModifInstance;
 import org.camunda.custom.operate.security.annotation.IsAuthenticated;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,10 +35,25 @@ public class InstanceModificationController extends AbstractController {
     this.zeebe = client;
   }
 
-  @IsAuthenticated
+  @CanModifInstance
   @PostMapping
   public ProcInstanceModificationRequest requestModification(
       @RequestBody ProcInstanceModificationRequest request) {
+    if (request.getVariables() != null
+        && !request.getVariables().isEmpty()
+        && !SecurityUtils.hasRole("modifVariables")) {
+      throw new UnauthorizedException("Insufficient privileges");
+    }
+    if (request.getActivateNodes() != null
+        && !request.getActivateNodes().isEmpty()
+        && !SecurityUtils.hasRole("modifState")) {
+      throw new UnauthorizedException("Insufficient privileges");
+    }
+    if (request.getTerminateNodes() != null
+        && !request.getTerminateNodes().isEmpty()
+        && !SecurityUtils.hasRole("modifState")) {
+      throw new UnauthorizedException("Insufficient privileges");
+    }
     request.setId(Long.valueOf(modificationRequests.size()));
     request.setOpened(new Date());
     request.setRequester(getAuthenticatedUsername());
@@ -44,7 +62,7 @@ public class InstanceModificationController extends AbstractController {
     return request;
   }
 
-  @IsAuthenticated
+  @CanModifInstance
   @DeleteMapping("/{id}")
   public void cancelRequestModification(@PathVariable Long id) {
     ProcInstanceModificationRequest request =
@@ -64,19 +82,20 @@ public class InstanceModificationController extends AbstractController {
     return modificationRequests;
   }
 
-  @IsAuthenticated
+  @CanApproveModification
   @GetMapping("/{id}")
   public ProcInstanceModificationRequest getRequestModification(@PathVariable Long id) {
     return modificationRequests.get(Integer.valueOf(id.toString()));
   }
 
-  @IsAuthenticated
+  @CanApproveModification
   @GetMapping("/{id}/{state}")
   public ProcInstanceModificationRequest validateRequestModification(
       @PathVariable Long id, @PathVariable String state) {
     ProcInstanceModificationRequest request =
         modificationRequests.get(Integer.valueOf(id.toString()));
-    if (!request.getRequester().equals(getAuthenticatedUsername())) {
+    if (SecurityUtils.hasRole("autoApproveModif")
+        || !request.getRequester().equals(getAuthenticatedUsername())) {
       request.setStatus(state);
       request.setClosed(new Date());
       request.setValidator(getAuthenticatedUsername());

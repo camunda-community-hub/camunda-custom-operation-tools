@@ -41,21 +41,7 @@ function AdminOrganization(orgParam: { organization: Organization }) {
         </Col>
       </Row>
       <Tab.Container id="left-tabs-example" defaultActiveKey="users">
-        <Row>
-          <Col sm={3}>
-            <Nav variant="pills" className="flex-column">
-              <Nav.Item>
-                <Nav.Link eventKey="users">Users</Nav.Link>
-              </Nav.Item>
-              <Nav.Item>
-                <Nav.Link eventKey="groups">Groups</Nav.Link>
-              </Nav.Item>
-            </Nav>
-          </Col>
-          <Col sm={9}>
-            <AdminUsers organization={org} />
-          </Col>
-        </Row>
+        <AdminUsers organization={org} />
       </Tab.Container>
     </div>
   );

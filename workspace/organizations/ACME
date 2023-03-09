@@ -1,19 +1,27 @@
 {
   "name" : "ACME",
-  "modified" : 1677851039119,
+  "modified" : 1678370450563,
   "active" : true,
   "cryptPassword" : true,
   "users" : [ {
+    "username" : "test",
+    "password" : {
+      "value" : "$2a$10$iPOvcG8E33jogFt4EbN.YOLl9ubmsf81auRXeTDXsjovUpLo7ulr2",
+      "encrypted" : true
+    },
+    "firstname" : "test",
+    "lastname" : "test",
+    "email" : null,
+    "roles" : [ "approveModif", "modifState" ]
+  }, {
     "username" : "demo",
     "password" : {
-      "value" : "$2a$10$X2NwM7hzi1..Huql.Bs7oeemL2RD1OiWVp.ngD3u2NfHKc4rCBUgi",
+      "value" : "$2a$10$SSix7GpDXDTCAWlDvmHzR.6ToMMgCHLF92aYTGi/x2JXi/r1Knk6C",
       "encrypted" : true
     },
     "firstname" : "De",
     "lastname" : "Mo",
     "email" : "christophe.dame@camunda.com",
-    "profile" : "Admin",
-    "groups" : [ "HR", "IT" ]
-  } ],
-  "groups" : [ "Sales", "Finance", "HR", "IT" ]
+    "roles" : [ "modifVariables", "viewVariables", "approveModif", "modifState", "autoApproveModif", "adminUsers" ]
+  } ]
 }

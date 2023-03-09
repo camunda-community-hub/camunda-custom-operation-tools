@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import processService from '../service/ProcessService';
 import { Row, Col, Table, InputGroup, Accordion, Badge, Button } from 'react-bootstrap';
 import InstanceDiagram from '../components/InstanceDiagram';
@@ -6,6 +7,7 @@ import InstanceVariables from '../components/InstanceVariables';
 
 function Instance() {
 
+  const user = useSelector((state: any) => state.auth.data)
   const [request, setRequest] = useState<any | null>(null);
   const [instance, setInstance] = useState<any | null>(null);
   const [history, setHistory] = useState<any[] | null>(null);
@@ -47,7 +49,11 @@ function Instance() {
   useEffect(() => {
     loadXmlDefinition();
     loadHistory();
-    loadVariables();
+    if (user!.roles.indexOf('viewVariables') >= 0) {
+      loadVariables();
+    } else {
+      setVariables([]);
+    }
   }, [instance]);
 
   const loadXmlDefinition = async () => {

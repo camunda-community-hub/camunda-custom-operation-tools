@@ -32,10 +32,12 @@ function AdminNavbar() {
             <NavLink className={({ isActive }) =>
               isActive ? "text-light menu-item selected" : "text-light menu-item"
             } to="/admin/instances">Instances</NavLink>
+          {user!.roles.indexOf('approveModif') >= 0 ?
             <NavLink className={({ isActive }) =>
               isActive ? "text-light menu-item selected" : "text-light menu-item"
             } to="/admin/modifRequests">Instances Modifications</NavLink>
-            {orgEnabled && user!.profile === 'Admin' ?
+            : <></>}
+          {orgEnabled && user!.roles.indexOf('adminUsers')>=0 ?
                 <NavLink className={({ isActive }) =>
                   isActive ? "text-light menu-item selected" : "text-light menu-item"
                 } to="/admin/users">Users</NavLink>

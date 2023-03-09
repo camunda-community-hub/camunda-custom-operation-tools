@@ -6,8 +6,7 @@ export interface IUser {
   firstname: string;
   lastname: string;
   token?: string;
-  profile: string;
-  groups: string[];
+  roles: string[];
 }
 
 export interface Password {

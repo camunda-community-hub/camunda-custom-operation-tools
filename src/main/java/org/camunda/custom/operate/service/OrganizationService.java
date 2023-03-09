@@ -1,5 +1,6 @@
 package org.camunda.custom.operate.service;
 
+import com.google.common.collect.Sets;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -115,11 +116,7 @@ public class OrganizationService {
 
   public Organization createOrganization(String name, boolean active, User... users)
       throws IOException {
-    Organization org =
-        new Organization()
-            .setName(name)
-            .setActive(active)
-            .addGroups("HR", "IT", "Finance", "Sales");
+    Organization org = new Organization().setName(name).setActive(active);
     for (User user : users) {
       org.addUser(user);
     }
@@ -177,8 +174,14 @@ public class OrganizationService {
               .setFirstname("De")
               .setLastname("Mo")
               .setEmail("christophe.dame@camunda.com")
-              .setProfile("Admin")
-              .addGroups("HR", "IT");
+              .setRoles(
+                  Sets.newHashSet(
+                      "viewVariables",
+                      "modifVariables",
+                      "modifState",
+                      "approveModif",
+                      "autoApproveModif",
+                      "adminUsers"));
       activeOrg = createOrganization("ACME", true, demo);
     }
   }

@@ -1,18 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Organization, IUser } from '../store/model';
-import Table from 'react-bootstrap/Table';
-import Form from 'react-bootstrap/Form';
-import Button from 'react-bootstrap/Button';
-import Col from 'react-bootstrap/Col';
-import Row from 'react-bootstrap/Row';
-import Card from 'react-bootstrap/Card';
-import InputGroup from 'react-bootstrap/InputGroup';
+import { Table, Form, Button, Col, Row, Card, InputGroup, DropdownButton, Dropdown, Badge } from 'react-bootstrap';
 
 function AdminUsers(orgParam: { organization: Organization }) {
   const [users, setUsers] = useState<IUser[]>(orgParam.organization.users);
   const [userIdx, setUserIdx] = useState<number | null>(orgParam.organization.users.length > 0 ? 0 : null);
   const [user, setUser] = useState<IUser | null>(orgParam.organization.users.length > 0 ? orgParam.organization.users[0] : null);
-  const emptyUser: IUser = { username: "", firstname: "", lastname: "", profile: "user", groups: [], password: { value: "", encrypted: false } };
+  const emptyUser: IUser = { username: "", firstname: "", lastname: "", roles: [], password: { value: "", encrypted: false } };
   type ObjectKey = keyof typeof emptyUser;
 
   const deleteUser = (index: number) => {
@@ -39,6 +33,18 @@ function AdminUsers(orgParam: { organization: Organization }) {
   const updateUser = () => {
     orgParam.organization.users[userIdx!] = user!;
     setUsers(Object.assign([], orgParam.organization.users));
+  }
+  const addRole = (role: string) => {
+    let clone: IUser = Object.assign({}, user);
+    if (clone.roles.indexOf(role) < 0) {
+      clone.roles.push(role);
+    }
+    setUser(clone);
+  }
+  const removeRole = (index: number) => {
+    let clone: IUser = Object.assign({}, user);
+    clone.roles.splice(index, 1);
+    setUser(clone);
   }
 
   return (
@@ -81,11 +87,22 @@ function AdminUsers(orgParam: { organization: Organization }) {
                 <Form.Control aria-label="Lastname" value={user.lastname} onChange={(evt) => changeUser('lastname', evt.target.value)} />
               </InputGroup>
               <InputGroup className="mb-3">
-                <InputGroup.Text>Profile</InputGroup.Text>
-                <Form.Select aria-label="Profile" value={user.profile} onChange={(evt) => changeUser('profile', evt.target.value)}>
-                  <option value="User">User</option>
-                  <option value="Admin">Admin</option>
-                </Form.Select>
+                <DropdownButton
+                  variant="primary"
+                  title="Roles">
+                  <Dropdown.Item onClick={() => addRole('viewVariables')}>view variables</Dropdown.Item>
+                  {user.roles.indexOf('viewVariables') >= 0 ?
+                    <Dropdown.Item onClick={() => addRole('modifVariables')}>variable modification</Dropdown.Item> : <></>}
+                  <Dropdown.Item onClick={() => addRole('modifState')}>state modification</Dropdown.Item>
+                  <Dropdown.Item onClick={() => addRole('approveModif')}>approve modification request</Dropdown.Item>
+                  {user.roles.indexOf('approveModif') >= 0 ?
+                    <Dropdown.Item onClick={() => addRole('autoApproveModif')}>auto approve modification</Dropdown.Item> : <></>}
+
+                  <Dropdown.Item onClick={() => addRole('adminUsers')}>admin users</Dropdown.Item>
+                </DropdownButton>
+                <div className="userRoleList">
+                  {user.roles.map((elt: string, index: number) => <Badge bg="primary" key={index}>{elt} <i className="bi bi-x" onClick={() => removeRole(index)}></i></Badge>)}
+                </div>
               </InputGroup>
               <InputGroup className="mb-3">
                 <InputGroup.Text>Password</InputGroup.Text>
