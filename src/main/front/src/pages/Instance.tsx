@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import processService from '../service/ProcessService';
 import NavigatedViewer, {
     BpmnElement,
@@ -21,6 +22,7 @@ const updateInstance: { instanceKey: number; terminateNodes: number[]; activateN
 
 function Instance() {
 
+  const user = useSelector((state: any) => state.auth.data)
   const [instance, setInstance] = useState<any | null>(null);
   const [history, setHistory] = useState<any[] | null>(null);
   const [variables, setVariables] = useState<any[] | null>(null);
@@ -49,9 +51,8 @@ function Instance() {
   useEffect(() => {
     loadXmlDefinition();
     loadHistory();
-    loadVariables();
-    if (instance) {
-      updateInstance.instanceKey = instance.key;
+    if (user!.roles.indexOf('viewVariables') >= 0) {
+      loadVariables();
     }
   }, [instance]);
 
@@ -252,6 +253,7 @@ function Instance() {
     setModifVariables(copy);
   }
   const submitChangeRequest = async () => {
+    updateInstance.instanceKey = instance.key;
     updateInstance.variables = {};
     for (let i = 0; i < modifVariables.length; i++) {
       updateInstance.variables[modifVariables[i].key] = modifVariables[i].value;
@@ -298,7 +300,9 @@ function Instance() {
           </div>
         </div>
         : <></>}
-      <Button variant="primary" onClick={openStateModifModal}>Change state</Button>
+      {user!.roles.indexOf('modifVariables') >= 0 || user!.roles.indexOf('modifState') >= 0 ?
+        <Button variant="primary" onClick={openStateModifModal}>Change state</Button>
+        : <></>}
       {processVariables ?
         <InstanceVariables variables={processVariables} />
         : <></>}
@@ -308,28 +312,32 @@ function Instance() {
           <Modal.Title>Instance modification</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Table variant="primary" striped bordered hover>
-            <thead>
-              <tr>
-                <th>Variable</th>
-                <th>Value</th>
-                <th><Button variant="success" onClick={addVariable}><i className="bi bi-plus-circle"></i></Button></th>
-              </tr>
-            </thead>
-            <tbody>
-              {modifVariables.map((myVar: any, index: number) =>
-                <tr key={index}>
-                  <td>
-                    <Form.Control value={myVar.key} onChange={(evt: any) => updateVariable(index, 'key', evt.target.value)} />
-                  </td>
-                  <td>
-                    <Form.Control value={myVar.value} onChange={(evt: any) => updateVariable(index, 'value', evt.target.value)} />
-                  </td>
-                  <td><Button variant="danger" onClick={() => deleteVariable(index)}><i className="bi bi-trash"></i></Button></td>
+          {user!.roles.indexOf('modifVariables') >= 0 ?
+            <Table variant="primary" striped bordered hover>
+              <thead>
+                <tr>
+                  <th>Variable</th>
+                  <th>Value</th>
+                  <th><Button variant="success" onClick={addVariable}><i className="bi bi-plus-circle"></i></Button></th>
                 </tr>
-              )}
-            </tbody>
-          </Table>
+              </thead>
+              <tbody>
+                {modifVariables.map((myVar: any, index: number) =>
+                  <tr key={index}>
+                    <td>
+                      <Form.Control value={myVar.key} onChange={(evt: any) => updateVariable(index, 'key', evt.target.value)} />
+                    </td>
+                    <td>
+                      <Form.Control value={myVar.value} onChange={(evt: any) => updateVariable(index, 'value', evt.target.value)} />
+                    </td>
+                    <td><Button variant="danger" onClick={() => deleteVariable(index)}><i className="bi bi-trash"></i></Button></td>
+                  </tr>
+                )}
+              </tbody>
+            </Table>
+            : <></>}
+          {user!.roles.indexOf('modifState') >= 0 ?
+            <>
           <InputGroup className="mb-3">
             <DropdownButton
               variant="primary"
@@ -354,6 +362,8 @@ function Instance() {
               {terminateFlowNodes.map((elt: any, index: number) => <Badge bg="primary" key={index}>{elt.businessObject.name ? elt.businessObject.name : elt.id}<br />{elt.key} <i className="bi bi-x" onClick={() => deleteTerminateFlowNode(index)}></i></Badge>)}
             </div>
           </InputGroup>
+            </>
+            : <></>}
         </Modal.Body>
         <Modal.Footer>
           <Button variant="primary" onClick={() => submitChangeRequest()}>Submit Request</Button>

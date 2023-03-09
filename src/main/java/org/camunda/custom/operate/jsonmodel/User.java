@@ -12,9 +12,7 @@ public class User {
   private String lastname;
   private String email;
 
-  private String profile;
-
-  private Set<String> groups = new HashSet<>();
+  private Set<String> roles = new HashSet<>();
 
   public User() {}
 
@@ -69,32 +67,23 @@ public class User {
     return this;
   }
 
-  public String getProfile() {
-    return profile;
+  public Set<String> getRoles() {
+    return roles;
   }
 
-  public User setProfile(String profile) {
-    this.profile = profile;
+  public User setRoles(Set<String> roles) {
+    this.roles = roles;
     return this;
   }
 
-  public Set<String> getGroups() {
-    return groups;
-  }
-
-  public User setGroups(Set<String> groups) {
-    this.groups = groups;
+  public User addRole(String role) {
+    this.roles.add(role);
     return this;
   }
 
-  public User addGroup(String group) {
-    this.groups.add(group);
-    return this;
-  }
-
-  public User addGroups(String... groups) {
-    for (String group : groups) {
-      this.groups.add(group);
+  public User addRoles(String... roles) {
+    for (String role : roles) {
+      this.roles.add(role);
     }
     return this;
   }

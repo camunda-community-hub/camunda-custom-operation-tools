@@ -9,8 +9,8 @@ import io.camunda.zeebe.client.ZeebeClient;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
+import org.camunda.custom.operate.security.annotation.CanSeeVariables;
 import org.camunda.custom.operate.security.annotation.IsAuthenticated;
 import org.camunda.custom.operate.service.OperateService;
 import org.slf4j.Logger;
@@ -18,8 +18,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -35,42 +33,6 @@ public class ProcessController {
   public ProcessController(ZeebeClient client, OperateService operateService) {
     this.zeebe = client;
     this.operateService = operateService;
-  }
-
-  @IsAuthenticated
-  @PostMapping("/{bpmnProcessId}/start")
-  public void startProcessInstance(
-      @PathVariable String bpmnProcessId, @RequestBody Map<String, Object> variables) {
-
-    LOG.info("Starting process `" + bpmnProcessId + "` with variables: " + variables);
-
-    zeebe
-        .newCreateInstanceCommand()
-        .bpmnProcessId(bpmnProcessId)
-        .latestVersion()
-        .variables(variables)
-        .send();
-  }
-
-  @IsAuthenticated
-  @PostMapping("/message/{messageName}/{correlationKey}")
-  public void publishMessage(
-      @PathVariable String messageName,
-      @PathVariable String correlationKey,
-      @RequestBody Map<String, Object> variables) {
-
-    LOG.info(
-        "Publishing message `{}` with correlation key `{}` and variables: {}",
-        messageName,
-        correlationKey,
-        variables);
-
-    zeebe
-        .newPublishMessageCommand()
-        .messageName(messageName)
-        .correlationKey(correlationKey)
-        .variables(variables)
-        .send();
   }
 
   @IsAuthenticated
@@ -131,7 +93,7 @@ public class ProcessController {
     return operateService.getProcessInstanceHistory(processInstanceKey);
   }
 
-  @IsAuthenticated
+  @CanSeeVariables
   @GetMapping("/{processInstanceKey}/variables")
   public List<Variable> getProcessInstanceVariables(@PathVariable Long processInstanceKey)
       throws OperateException {
