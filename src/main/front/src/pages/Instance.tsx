@@ -351,7 +351,7 @@ function Instance() {
                 <Dropdown.Item key={index} onClick={() => addTerminateFlowNode(elt)}>{elt.businessObject.name ? elt.businessObject.name : elt.flowNodeId}</Dropdown.Item>)}
             </DropdownButton>
             <div className="userGroupList">
-              {terminateFlowNodes.map((elt: any, index: number) => <Badge bg="primary" key={index}>{elt.businessObject.name ? elt.businessObject.name : elt.id} <i className="bi bi-x" onClick={() => deleteTerminateFlowNode(index)}></i></Badge>)}
+              {terminateFlowNodes.map((elt: any, index: number) => <Badge bg="primary" key={index}>{elt.businessObject.name ? elt.businessObject.name : elt.id}<br />{elt.key} <i className="bi bi-x" onClick={() => deleteTerminateFlowNode(index)}></i></Badge>)}
             </div>
           </InputGroup>
         </Modal.Body>
