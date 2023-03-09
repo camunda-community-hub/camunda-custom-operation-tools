@@ -72,7 +72,8 @@ public class InstanceModificationController extends AbstractController {
 
   @IsAuthenticated
   @GetMapping("/{id}/{state}")
-  public void validateRequestModification(@PathVariable Long id, @PathVariable String state) {
+  public ProcInstanceModificationRequest validateRequestModification(
+      @PathVariable Long id, @PathVariable String state) {
     ProcInstanceModificationRequest request =
         modificationRequests.get(Integer.valueOf(id.toString()));
     if (!request.getRequester().equals(getAuthenticatedUsername())) {
@@ -110,6 +111,7 @@ public class InstanceModificationController extends AbstractController {
           }
         }
       }
+      return request;
     } else {
       throw new UnauthorizedException("The requester can't validate his own request");
     }

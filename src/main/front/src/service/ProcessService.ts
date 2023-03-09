@@ -42,6 +42,10 @@ export class ProcessService {
     const { data } = await api.get<any>('/instance/modif/'+id);
     return data;
   }
+  closeRequest = async (id: number, state: string): Promise<any> => {
+    const { data } = await api.get<any>('/instance/modif/' + id+'/'+state);
+    return data;
+  }
 }
 
 const processService = new ProcessService();

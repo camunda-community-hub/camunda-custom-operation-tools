@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import processService from '../service/ProcessService';
-import { Row, Col, Table, InputGroup, Accordion, Badge } from 'react-bootstrap';
+import { Row, Col, Table, InputGroup, Accordion, Badge, Button } from 'react-bootstrap';
 import InstanceDiagram from '../components/InstanceDiagram';
 import InstanceVariables from '../components/InstanceVariables';
 
@@ -70,11 +70,11 @@ function Instance() {
       }
       if (request.activateNodes) {
         for (let i = 0; i < request.activateNodes.length; i++) {
-          result.splice(0,0,{
+          result.splice(0, 0, {
             key: i,
             processInstanceKey: request.instanceKey,
             startDate: new Date().toISOString(),
-            endDate:null,
+            endDate: null,
             flowNodeId: request.activateNodes[i],
             state: "ACTIVE",
             incident: false
@@ -98,7 +98,7 @@ function Instance() {
       setProcessVariables(procVariables);
       let result: any[] = Object.assign([], procVariables);
       if (request.variables && request.variables.length) {
-        
+
         for (let i = 0; i < request.variables.length; i++) {
           let newVar = request.variables[i];
           let found = false;
@@ -116,73 +116,90 @@ function Instance() {
       setResultProcessVariables(result);
     }
   }
-  
+
+  const closeRequest = async (state: string) => {
+    let result = await processService.closeRequest(request.id, state);
+    setRequest(result);
+  }
+
   return (
     <>
+      {request && !request.closed ?
+        <>
+          <Button variant="primary" onClick={() => closeRequest('approved')}>Approve changes</Button>
+          <Button variant="secondary" onClick={() => closeRequest('rejected')}>Reject changes</Button>
+        </>
+        : <></>}
       <Accordion>
-          <Accordion.Item key={0} eventKey={'0'} >
+        <Accordion.Item key={0} eventKey={'0'} >
           <Accordion.Header>Modification request</Accordion.Header>
-            <Accordion.Body>
-          {request && request.variables && request.variables.length ?
-            <Table variant="primary" striped bordered hover>
-              <thead>
-                <tr>
-                  <th>Variable</th>
-                  <th>Value</th>
-                </tr>
-              </thead>
-              <tbody>
-                {request.variables.map((myVar: any, index: number) =>
-                  <tr key={index}>
-                    <td>{myVar.name}</td>
-                    <td>{myVar.value}</td>
+          <Accordion.Body>
+            {request && request.variables && request.variables.length ?
+              <Table variant="primary" striped bordered hover>
+                <thead>
+                  <tr>
+                    <th>Variable</th>
+                    <th>Value</th>
                   </tr>
-                )}
-              </tbody>
-            </Table>
-            : <></>}
-          {request && request.activateNodes && request.activateNodes.length ?
-            <InputGroup className="mb-3">
-              <InputGroup.Text>Activate</InputGroup.Text>
+                </thead>
+                <tbody>
+                  {request.variables.map((myVar: any, index: number) =>
+                    <tr key={index}>
+                      <td>{myVar.name}</td>
+                      <td>{myVar.value}</td>
+                    </tr>
+                  )}
+                </tbody>
+              </Table>
+              : <></>}
+            {request && request.activateNodes && request.activateNodes.length ?
+              <InputGroup className="mb-3">
+                <InputGroup.Text>Activate</InputGroup.Text>
 
-              <div className="userGroupList">
-                {request.activateNodes.map((elt: string, index: number) => <Badge bg="primary" key={index}>{elt}</Badge>)}
-              </div>
-            </InputGroup>
-            : <></>}
-          {request && request.terminateNodes && request.terminateNodes.length ?
-            <InputGroup className="mb-3">
-              <InputGroup.Text>Terminate</InputGroup.Text>
+                <div className="userGroupList">
+                  {request.activateNodes.map((elt: string, index: number) => <Badge bg="primary" key={index}>{elt}</Badge>)}
+                </div>
+              </InputGroup>
+              : <></>}
+            {request && request.terminateNodes && request.terminateNodes.length ?
+              <InputGroup className="mb-3">
+                <InputGroup.Text>Terminate</InputGroup.Text>
 
-              <div className="userGroupList">
-                {request.terminateNodes.map((elt: string, index: number) => <Badge bg="primary" key={index}>{elt}</Badge>)}
-              </div>
-            </InputGroup>
+                <div className="userGroupList">
+                  {request.terminateNodes.map((elt: string, index: number) => <Badge bg="primary" key={index}>{elt}</Badge>)}
+                </div>
+              </InputGroup>
               : <></>}
           </Accordion.Body>
         </Accordion.Item>
+        <Accordion.Item key={1} eventKey={'1'} >
+          <Accordion.Header>Review changes</Accordion.Header>
+          <Accordion.Body>
+            <Row>
+              <Col xs={12} sm={12} md={6} lg={6} xl={6} xxl={6}>
+                <h2>Current state</h2>
+                {xml && history && variables ?
+                  <InstanceDiagram xml={xml} history={history} variables={variables} style={{ height: "calc(40vh - 95px)", position: "relative" }} />
+                  : <></>}
+                {processVariables ?
+                  <InstanceVariables variables={processVariables} />
+                  : <></>}
+              </Col>
+              <Col xs={12} sm={12} md={6} lg={6} xl={6} xxl={6}>
+                <h2>After approval</h2>
+                {xml && resultHistory && variables ?
+                  <InstanceDiagram xml={xml} history={resultHistory} variables={variables} style={{ height: "calc(40vh - 95px)", position: "relative" }} />
+                  : <></>}
+                {resultProcessVariables ?
+                  <InstanceVariables variables={resultProcessVariables} />
+                  : <></>}
+              </Col>
+            </Row>
+
+          </Accordion.Body>
+        </Accordion.Item>
       </Accordion>
-    <Row>
-        <Col xs={12} sm={12} md={6} lg={6} xl={6} xxl={6}>
-          <h2>Current state</h2>
-      {xml && history && variables ?
-            <InstanceDiagram xml={xml} history={history} variables={variables} style={{ height: "calc(40vh - 95px)", position: "relative" }} />
-        : <></>}
-      {processVariables ?
-        <InstanceVariables variables={processVariables} />
-        : <></>}
-        </Col>
-        <Col xs={12} sm={12} md={6} lg={6} xl={6} xxl={6}>
-          <h2>After approval</h2>
-          {xml && resultHistory && variables ?
-            <InstanceDiagram xml={xml} history={resultHistory} variables={variables} style={{ height: "calc(40vh - 95px)", position: "relative" }} />
-        : <></>}
-          {resultProcessVariables ?
-        <InstanceVariables variables={resultProcessVariables} />
-        : <></>}
-        </Col>
-      </Row>
-      </>
+    </>
   );
 }
 
