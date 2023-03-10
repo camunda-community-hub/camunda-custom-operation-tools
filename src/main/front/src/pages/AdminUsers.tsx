@@ -26,7 +26,7 @@ function AdminUsers() {
       <Tabs
         id="orgTabs"
         className="mb-3">
-        {organizations ? organizations.map((org: Organization, index:number) =>
+        {organizations ? organizations.map((org: Organization, index: number) =>
           <Tab key={index} eventKey={index} title={org.oldname} tabClassName={org.active ? 'bi bi-check-lg' : ''}>
             <AdminOrganization organization={org} />
           </Tab>
