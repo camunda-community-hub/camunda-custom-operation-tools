@@ -6,6 +6,8 @@
 
 This project is made to provide an example of custom Operate based on bpmn-js, Operate APIs and Zeebe client. The idea is to evaluate complexity to build custom solution when Operate doesn't fit completly.
 
+This example show how a customer could build a 4-eyes principle mechanism where a user request process modifications (state, variables) and another user has to validate the request before it's applied in Zeebe's engine.
+
 :information_source: This is a community project that you can use during exploration phase, PoCs, trainings, etc. It's **not production ready** and you should carefully review it before using it in production.
 
 ## Repository content
@@ -29,9 +31,17 @@ Run the application via
 UI [http://localhost:8080/](http://localhost:8080/)
 Swagger UI: [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
 
-The first time you use the project, you should be able to connect with demo/demo to create upload new connector implementations and manage secrets.
+The first time you use the project, you should be able to connect with demo/demo to do all operations.
 
-When you start the application for the first time, an "ACME" organization is created for you with a single user demo/demo with admin rights. When you access the landing page, you'll be able to access the "admin" section where you can [manage forms](https://github.com/camunda-community-hub/extended-form-js), [mail templates](https://github.com/camunda-community-hub/thymeleaf-feel) and your organization.
+When you start the application for the first time, an "ACME" organization is created for you with a single user demo/demo with all rights.
+Roles are the followings :
+- viewVariables : can view process variables
+- modifVariables : only available if you have viewVariables. Allow to modify variables
+- modifState : can terminate/activate instance flownodes
+- approveModif : can approve other user requests
+- autoApproveModif : depends on approveModif. Can approve  his own requests
+
+You can create other users with a subset of these permissions to have different behaviours.
 
 ## Secure the app with keycloak
 If you want to secure your app with keycloak, you can set the keycloak.enabled to true and uncomment the properties in the application.yaml file.
@@ -41,16 +51,12 @@ keycloak:
   enabled: true
   auth-server-url: http://localhost:18080/auth
   realm: camunda-platform
-  resource: ConnectorRuntime
+  resource: CustomOperate
   public-client: true
   principal-attribute: preferred_username
 ```
 
-This application relies on 2 kind of users :
-- Admin : has a role Admin
-- User : is connected without Admin role.
-
-> :information_source: To use the application with Keycloak, create the ConnectorRuntime client and Admin role and assign it to (at least) one user.
+> :information_source: To use the application with Keycloak, create the CustomOperate client and roles listed above and assign them to (at least) one user.
 
 ## Build and run the image
 
@@ -62,4 +68,4 @@ docker run -p 8888:8080 camunda-community/custom-operate
 ```
 
 ## Time consumption
-The current result was developped in 16 hours.
+The current result was developped in 18 hours.
