@@ -1,14 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import NavigatedViewer, {
-  Event, BusinessObject
+  Event, BusinessObject, BpmnElement
 } from 'bpmn-js/lib/NavigatedViewer';
 import ElementTemplatesIconsRenderer from '@bpmn-io/element-template-icon-renderer';
 import { Table } from 'react-bootstrap';
+import InstanceModification from './InstanceModification';
 
 type Params = {
+  instance: any;
   xml: string;
   history: any[];
   variables: any[];
+  modif: boolean;
   style: any
 };
 
@@ -18,8 +21,11 @@ function InstanceDiagram(params: Params) {
   const diagramContainer = React.useRef<HTMLDivElement>(null);
   const [showInfo, setShowInfo] = useState<boolean>(false);
   const [currentFlowNode, setCurrentFlowNode] = useState<any | null>(null);
+
+  const [processElements, setProcessElements] = useState<BpmnElement[] | null>(null);
+  const [activeNodes, setActiveNodes] = useState<any[] | null>(null);
   let clickables: any[] = [];
- 
+
   useEffect(() => {
     if (params.history) {
       for (let i = 0; i < params.history.length; i++) {
@@ -31,7 +37,7 @@ function InstanceDiagram(params: Params) {
     }
   }, []);
 
-  
+
   useEffect(() => {
     if (params.history && navigatedViewer) {
       for (let i = params.history.length - 1; i >= 0; i--) {
@@ -46,7 +52,31 @@ function InstanceDiagram(params: Params) {
         }
       }
     }
+    if (params.modif && navigatedViewer) {
+      let allElts = navigatedViewer.get('elementRegistry').getAll();
+      let activable: BpmnElement[] = [];
+      for (let i = 0; i < allElts.length; i++) {
+        if (allElts[i].type != "bpmn:SequenceFlow" &&
+          allElts[i].type != "label" &&
+          allElts[i].type != "bpmn:BoundaryEvent" &&
+          allElts[i].type != "bpmn:Process") {
+          activable.push(allElts[i]);
+        }
+      }
+      setProcessElements(activable);
 
+
+      let actives = [];
+      for (let i = params.history.length - 1; i >= 0; i--) {
+        if (params.history[i].state === "ACTIVE") {
+          let clone = Object.assign({}, params.history[i]);
+          clone.businessObject = navigatedViewer.get('elementRegistry').get(clone.flowNodeId).businessObject;
+          actives.push(clone);
+        }
+      }
+      setActiveNodes(actives);
+
+    }
   }, [navigatedViewer]);
 
   const createViewer = async () => {
@@ -126,7 +156,7 @@ function InstanceDiagram(params: Params) {
       'bpmn:MultiInstanceLoopCharacteristics'
     );
   }
-  
+
   return (
     <>
       <div ref={diagramContainer} style={params.style}>
@@ -159,6 +189,7 @@ function InstanceDiagram(params: Params) {
           </div>
         </div>
         : <></>}
+      {params.modif && processElements && activeNodes ? <InstanceModification instance={params.instance} processElements={processElements} activeNodes={activeNodes} /> : <></>}
 
     </>
   );

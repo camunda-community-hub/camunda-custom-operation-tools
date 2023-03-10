@@ -185,7 +185,7 @@ function Instance() {
               <Col xs={12} sm={12} md={6} lg={6} xl={6} xxl={6}>
                 <h2>Current state</h2>
                 {xml && history && variables ?
-                  <InstanceDiagram xml={xml} history={history} variables={variables} style={{ height: "calc(40vh - 95px)", position: "relative" }} />
+                  <InstanceDiagram instance={instance} modif={false} xml={xml} history={history} variables={variables} style={{ height: "calc(40vh - 95px)", position: "relative" }} />
                   : <></>}
                 {processVariables ?
                   <InstanceVariables variables={processVariables} />
@@ -194,7 +194,7 @@ function Instance() {
               <Col xs={12} sm={12} md={6} lg={6} xl={6} xxl={6}>
                 <h2>After approval</h2>
                 {xml && resultHistory && variables ?
-                  <InstanceDiagram xml={xml} history={resultHistory} variables={variables} style={{ height: "calc(40vh - 95px)", position: "relative" }} />
+                  <InstanceDiagram instance={instance} modif={false} xml={xml} history={resultHistory} variables={variables} style={{ height: "calc(40vh - 95px)", position: "relative" }} />
                   : <></>}
                 {resultProcessVariables ?
                   <InstanceVariables variables={resultProcessVariables} />
