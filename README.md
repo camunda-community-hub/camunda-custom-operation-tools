@@ -2,9 +2,9 @@
 ![Compatible with: Camunda Platform 8](https://img.shields.io/badge/Compatible%20with-Camunda%20Platform%208-0072Ce)
 [![](https://img.shields.io/badge/Lifecycle-Incubating-blue)](https://github.com/Camunda-Community-Hub/community/blob/main/extension-lifecycle.md#incubating-)
 
-# Camunda Platform 8 custom Operate using React, Java and Spring Boot
+# Camunda Platform 8 custom operations tools using React, Java and Spring Boot
 
-This project is made to provide an example of custom Operate based on bpmn-js, Operate APIs and Zeebe client. The idea is to evaluate complexity to build custom solution when Operate doesn't fit completly.
+This project is made to provide an example of custom operation tools based on bpmn-js, Operate APIs (**Enterprise grade feature**) and Zeebe client. The idea is to evaluate complexity to build custom solution on top of Operate when Operate doesn't fit completly.
 
 This example show how a customer could build a 4-eyes principle mechanism where a user request process modifications (state, variables) and another user has to validate the request before it's applied in Zeebe's engine.
 
