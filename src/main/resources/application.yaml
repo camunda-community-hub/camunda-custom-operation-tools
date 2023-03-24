@@ -11,9 +11,9 @@ keycloak:
   
 zeebe.client.cloud:
   region: bru-2
-  clusterId: 3e546037-a61a-4ca6-a9ff-190d77e80eff
-  clientId: KH-~bAWGbeyX_0Ow1jLyvsyluPO8I800
-  clientSecret: CTSTGyI_1xI1MEH.m_Du.2f6PHXIvNH5-BXb~Yf4o0DX0SvH4BUQmrhYnSLiPMb7
+  clusterId: XXX
+  clientId: XXX
+  clientSecret: XXX
   
 #zeebe.client:
 #  broker.gatewayAddress: 127.0.0.1:26500
