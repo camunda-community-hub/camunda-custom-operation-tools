@@ -19,7 +19,7 @@
     "axios": "^0.27.2",
     "bootstrap": "^5.2.1",
     "bpmn-js": "10.3.0",
-    "bpmn-moddle": "8.0.0",
+    "bpmn-moddle": "8.0.1",
     "dmn-js": "13.0.0",
     "i18next": "^21.9.2",
     "i18next-http-backend": "^1.4.4",
