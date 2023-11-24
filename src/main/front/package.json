@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@bpmn-io/element-template-icon-renderer": "^0.4.0",
+    "@bpmn-io/element-template-icon-renderer": "^0.5.0",
     "@codemirror/lang-html": "^6.1.1",
     "@codemirror/lang-json": "^6.0.0",
     "@reduxjs/toolkit": "^1.8.5",
